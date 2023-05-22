@@ -1,0 +1,634 @@
+openapi: 3.0.1
+
+
+info:
+  title: Gateway Controller Element Manager Rest Api Definition
+  version: 1.0.0
+  description: "In order to use these APIs for each authenticated user, sessionId must be given in the request header."
+  
+tags:
+ - name: "Gwcem"
+   description: "Operations related to Gateway Controller Element Manager"
+   
+paths:
+
+  /gwcem/v1.0/gatewayData/{gwcID}/{gwName}: 
+    get:
+      tags:
+        - Gwcem
+      description: Returns the data a given gateway     
+      operationId: gatewayData
+      parameters:
+        - name: session-id
+          in: header
+          required: true
+          schema:
+            type: string
+            example: f7dd3fe7-a792-41b4-b6ee-0d35d3405c6e
+        - name: gwcID
+          in: path
+          required: true
+          schema:
+            type: string
+            example: GWC-1
+        - name: gwName
+          in: path
+          required: true
+          schema:
+            type: string
+            example: mediatrix  
+            
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayData'
+             
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+        '400':
+          description: Bad request.
+                    
+        '401':
+          description:  Unauthorized. This may be due to expired or invalid credentials
+          
+        '404':
+          description: Invalid request
+           
+  /gwcem/v1.0/lmm-gateways/{gwName}: 
+    get:
+      tags:
+        - Gwcem
+      description: get LMM Line Gateway Names      
+      operationId: lmm-gateways
+      parameters:
+        - name: session-id
+          in: header
+          required: true
+          schema:
+            type: string
+            example: f7dd3fe7-a792-41b4-b6ee-0d35d3405c6e
+        - name: gwName
+          in: path
+          required: true
+          schema:
+            type: string
+            example: mediatrix  
+            
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericArray'
+              example:
+                - name: mediatrix
+                - name: co24linegw
+             
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+        '400':
+          description: Bad request.
+                    
+        '401':
+          description:  Unauthorized. This may be due to expired or invalid credentials
+          
+        '404':
+          description: Invalid request                        
+  
+  /gwcem/v1.0/endpoint-by-filter/{isMG9K}/{epData}: 
+    get:
+      tags:
+        - Gwcem
+      description: Search for endpoints ordered by extTerminalNumber by using the different fields in the endpoints structre as filters   
+      operationId: endpoint-by-filter
+      parameters:
+        - name: session-id
+          in: header
+          required: true
+          schema:
+            type: string
+            example: f7dd3fe7-a792-41b4-b6ee-0d35d3405c6e
+        - name: isMG9K
+          in: path
+          required: true
+          schema:
+            type: boolean
+            example: false  
+        - name: epData
+          in: path
+          required: true
+          schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EndpointData'
+            
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndpointSearchResult'
+             
+             
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+        '400':
+          description: Bad request.
+                    
+        '401':
+          description:  Unauthorized. This may be due to expired or invalid credentials
+          
+        '404':
+          description: Invalid request  
+
+ 
+  /gwcem/v1.0/gwcNode-by-filter: 
+    get:
+      tags:
+        - Gwcem
+      description: Returns a list of GWC devices based upon the provided input   
+      operationId: gwcNode-by-filter
+      parameters:
+        - name: session-id
+          in: header
+          required: true
+          schema:
+            type: string
+            example: f7dd3fe7-a792-41b4-b6ee-0d35d3405c6e
+      requestBody:
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GWCNode'
+           
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GWCNodes_ext'
+             
+             
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+        '400':
+          description: Bad request.
+                    
+        '401':
+          description:  Unauthorized. This may be due to expired or invalid credentials
+          
+        '404':
+          description: Invalid request
+          
+          
+  /gwcem/v1.0/gwc-status-list: 
+    get:
+      tags:
+        - Gwcem
+      description: Returns a list of GWCNodes of GWC that can be communicated to.  
+      operationId: gwc-status-list
+      parameters:
+        - name: session-id
+          in: header
+          required: true
+          schema:
+            type: string
+            example: f7dd3fe7-a792-41b4-b6ee-0d35d3405c6e
+      requestBody:
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GWCNodes'
+           
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GWCNodes'
+             
+             
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+        '400':
+          description: Bad request.
+                    
+        '401':
+          description:  Unauthorized. This may be due to expired or invalid credentials
+          
+        '404':
+          description: Invalid request
+          
+          
+  /gwcem/v1.0/gwc-active-ip/{gwcID}: 
+    get:
+      tags:
+        - Gwcem
+      description: get the active IP addresses of a GWC  
+      operationId: gwc-active-ip
+      parameters:
+        - name: session-id
+          in: header
+          required: true
+          schema:
+            type: string
+            example: f7dd3fe7-a792-41b4-b6ee-0d35d3405c6e
+        - name: gwcID
+          in: path
+          required: true
+          schema:
+            type: string
+            example: GWC-1       
+            
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+                example: 1.2.3.4
+             
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+        '400':
+          description: Bad request.
+                    
+        '401':
+          description:  Unauthorized. This may be due to expired or invalid credentials
+          
+        '404':
+          description: Invalid request
+
+  /gwcem/v1.0/properties: 
+    get:
+      tags:
+        - Gwcem
+      description: Method to retrieve the values in the GWCEM.properties file.  
+      operationId: properties
+      parameters:
+        - name: session-id
+          in: header
+          required: true
+          schema:
+            type: string
+            example: f7dd3fe7-a792-41b4-b6ee-0d35d3405c6e
+ 
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyList'
+             
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+        '400':
+          description: Bad request.
+                    
+        '401':
+          description:  Unauthorized. This may be due to expired or invalid credentials
+          
+        '404':
+          description: Invalid request 
+          
+          
+  /gwcem/v1.0/middlebox-ip/{MiddleBoxName}: 
+    get:
+      tags:
+        - Gwcem
+      description: Get the middlebox ip address from middlebox name.  
+      operationId: middlebox-ip
+      parameters:
+        - name: session-id
+          in: header
+          required: true
+          schema:
+            type: string
+            example: f7dd3fe7-a792-41b4-b6ee-0d35d3405c6e
+            
+        - name: MiddleBoxName
+          in: path
+          required: true
+          schema:
+            type: string
+              
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+                example: 10.2.3.42
+             
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+        '400':
+          description: Bad request.
+                    
+        '401':
+          description:  Unauthorized. This may be due to expired or invalid credentials
+          
+        '404':
+          description: Invalid request 
+          
+          
+components:
+  schemas:
+  
+    GatewayData:
+      type: object
+      properties:
+        itransRootMiddleboxNames:
+          $ref: '#/components/schemas/itransRootMiddleboxNameSeq'
+        applicationData:
+          $ref: '#/components/schemas/KeyValuePairList'
+        name:
+          type: string
+          example: null
+        ipAddress:
+          type: string
+          example: null
+        type:
+          type: string
+          example: null
+        extNodeNumber:
+          type: string
+          example: null
+        protocol:
+          type: string
+          example: null          
+        protVers:
+          type: string
+          example: null
+        protPort:
+          type: string
+          example: null
+        heartbeat:
+          type: string
+          example: null
+        connSel:
+          type: string
+          example: null
+        profile:
+          type: string
+          example: null          
+        pepServerName:
+          type: string
+          example: null
+        middleBoxName:
+          type: string
+          example: null          
+        algName:
+          type: string
+          example: null          
+        defaultDomainName:
+          type: string
+          example: null            
+          
+      example: null
+      
+    KeyValuePair:
+      type: object
+      properties:
+        name:
+          type: string
+          example: null  
+        value:
+          type: string
+          example: null
+          
+      
+    KeyValuePairList:
+      type: array
+      items:
+        $ref: '#/components/schemas/KeyValuePair'
+        
+        
+
+    GenericArray:
+      type: array
+      items:
+        type: string
+        properties:
+         name:
+           type: string
+        
+
+    itransRootMiddlebox:
+      type: object
+      properties:
+        itransRootMiddleboxName:
+          type: string
+          example: null  
+      
+    itransRootMiddleboxNameSeq:
+      type: array
+      items:
+        $ref: '#/components/schemas/itransRootMiddlebox'
+          
+    Error:
+      required:
+        - errorCode
+        - message
+      properties:
+        errorCode:
+          type: string
+        message:
+          type: string
+          
+    EndpointData:
+      type: object
+      properties:
+        gwcID:
+          type: string
+        gatewayName:
+          type: string
+        gwHostname:
+          type: string
+        gwDefaultDomain:
+          type: string
+        endpointName:
+          type: string    
+        extNodeNumber:
+          type: string 
+        extTerminalNumber:
+          type: string           
+        endpointStatus:
+          type: string    
+        iid:
+          type: string           
+        endpointTNType:
+          type: string     
+          
+    EndpointDataList:
+      type: array
+      items:
+        $ref: '#/components/schemas/EndpointData'
+    
+          
+    EndpointSearchResult:
+      type: object
+      properties:
+        epData:
+          $ref: '#/components/schemas/EndpointDataList'
+        count:
+          type: integer
+          example: null    
+          
+          
+    GWCNodes_ext:
+      type: array
+      items:
+        $ref: '#/components/schemas/GWCNode_ext'          
+          
+    GWCNode_ext:
+      type: object
+      properties:
+        gwcNodeInfo:
+          $ref: '#/components/schemas/GWCNode'
+        gwcNodeNumber:
+          type: integer
+          example: null          
+          
+    GWCNode:
+      type: object
+      properties:
+        GWCInfo:
+          $ref: '#/components/schemas/GWCData'
+        ctxId:
+          type: string
+          example: null        
+        ctxName:
+          type: string
+          example: null
+        LoadName:
+          type: string
+          example: null
+          
+          
+    GWCData:
+      type: object
+      properties:
+        capabilities:
+          $ref: '#/components/schemas/GwcCapabilityDataList'
+        gwcAlias:
+          type: string
+          example: null        
+        ipAddress:
+          type: string
+          example: null
+        snmpPort:
+          type: string
+          example: null
+
+    PropertyList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Property'
+        
+        
+    Property:
+      type: object
+      properties:
+        key:
+          type: string
+          example: null  
+        value:
+          type: string
+          example: null
+          
+          
+    GwcCapabilityDataList:
+      type: object
+      properties:
+         capacity:
+           type: integer
+         capability:
+           $ref: '#/components/schemas/GwcCapability' 
+           
+    GWCNodes:
+      type: array
+      items:
+         $ref: '#/components/schemas/GWCNode'      
+        
+    GwcCapability:
+      type: string
+      enum:
+        - nilType
+        - lines
+        - trunks
+        - audio
+        - apg
+        - dpt
+        - dqos
+        - smallGWs
+        - largeGWs
+        - audioGWs
+        - apgGWs
+        - sipt
+        - vrdn
+        - ra
+        - bct
+        - ipsec
+        - kerberos
+        - v53
+        - conferences
+        - announcements
+        - rmgcGWs
+        - h323
+        - dpl
+        - voip_vpn    
